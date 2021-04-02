@@ -6,6 +6,7 @@ import ErrorAlert from '../../components/ui/ErrorAlert';
 import { Button } from '../../components/ui/Button';
 import useSWR from 'swr';
 import { useEffect, useState } from 'react';
+import Head from 'next/head';
 export default function FilteredEventsPage({ hasError, events, dateProps }) {
   const [loadedEvents, setLoadedEvents] = useState();
   const router = useRouter();
@@ -25,12 +26,35 @@ export default function FilteredEventsPage({ hasError, events, dateProps }) {
       setLoadedEvents(events);
     }
   }, [data]);
+
+  let pageHeadData = (
+    <Head>
+      <title>Filtered Events</title>
+      <meta name='description' content={`A list of filtered events`} />
+    </Head>
+  );
+
   if (!loadedEvents) {
-    return <p className='center'>Loading...</p>;
+    return (
+      <>
+        {pageHeadData}
+        <p className='center'>Loading...</p>
+      </>
+    );
   }
+
   const filteredYear = +filterData[0];
   const filteredMonth = +filterData[1];
 
+  pageHeadData = (
+    <Head>
+      <title>Filtered Events</title>
+      <meta
+        name='description'
+        content={`All events for ${filteredMonth}/${filteredYear}`}
+      />
+    </Head>
+  );
   if (
     isNaN(filteredYear) ||
     isNaN(filteredMonth) ||
@@ -42,6 +66,7 @@ export default function FilteredEventsPage({ hasError, events, dateProps }) {
   ) {
     return (
       <>
+        {pageHeadData}
         <ErrorAlert>
           <p>Invalid Filter. Adjust Your Values</p>
         </ErrorAlert>
@@ -63,6 +88,7 @@ export default function FilteredEventsPage({ hasError, events, dateProps }) {
   if (!filteredEvents || filteredEvents.length === 0) {
     return (
       <>
+        {pageHeadData}
         <ErrorAlert>
           <p>No Events Founds</p>
         </ErrorAlert>
@@ -75,6 +101,7 @@ export default function FilteredEventsPage({ hasError, events, dateProps }) {
   const date = new Date(filteredYear, filteredMonth - 1);
   return (
     <>
+      {pageHeadData}
       <ResultsTitle date={date} />
       <EventList items={filteredEvents} />
     </>
