@@ -16,6 +16,7 @@ async function handler(req, res) {
   }
 
   if (req.method === 'POST') {
+    console.log('entro aca');
     const { email, name, text } = req.body;
     if (
       !email ||
